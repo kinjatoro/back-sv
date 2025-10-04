@@ -1,0 +1,26 @@
+{
+  "name": "zero-trust",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.15.0",
+    "nodemailer": "^6.9.15",
+    "nodemon": "^3.1.4",
+    "zero-trust": "file:",
+    "zod": "^4.1.11"
+  }
+}
