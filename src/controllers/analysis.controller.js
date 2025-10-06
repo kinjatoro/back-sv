@@ -77,7 +77,8 @@ export const getPresignedUploadUrl = async (req, res) => {
       Expires: 300, // válido por 60 segundos
       ContentType: contentType
     };
-
+    console.log('🔐 Key generado:', key);
+    console.log('🔗 URL firmada:', uploadUrl);
     const uploadUrl = s3.getSignedUrl("putObject", params);
 
     return res.json({ uploadUrl, key });
