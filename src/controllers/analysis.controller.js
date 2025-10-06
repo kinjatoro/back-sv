@@ -78,9 +78,9 @@ export const getPresignedUploadUrl = async (req, res) => {
       ContentType: contentType
     };
     console.log('🔐 Key generado:', key);
-    console.log('🔗 URL firmada:', uploadUrl);
+    
     const uploadUrl = s3.getSignedUrl("putObject", params);
-
+    console.log('🔗 URL firmada:', uploadUrl);
     return res.json({ uploadUrl, key });
   } catch (err) {
     console.error(err);
