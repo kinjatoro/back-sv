@@ -5,11 +5,13 @@ import {
   getAllAnalysis,
   getAnalysisByUserId,
   deleteAnalysis,
+  getPresignedUploadUrl,
 } from "../controllers/analysis.controller.js";
 
 export const analysisRouter = express.Router();
 
-analysisRouter.post("/", createAnalysis);                    // Crear análisis
-analysisRouter.get("/", getAllAnalysis);                    // Todos los análisis
-analysisRouter.get("/user/:id", getAnalysisByUserId);       // Por usuario
-analysisRouter.delete("/:id", deleteAnalysis);              // Borrar por ID
+analysisRouter.post("/", createAnalysis);
+analysisRouter.get("/", getAllAnalysis);
+analysisRouter.get("/user/:id", getAnalysisByUserId);
+analysisRouter.delete("/:id", deleteAnalysis);
+analysisRouter.get("/upload-url", getPresignedUploadUrl);

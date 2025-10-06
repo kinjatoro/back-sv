@@ -7,6 +7,17 @@ import {
   removeAnalysis,
 } from "../services/analysis.service.js";
 
+import AWS from "aws-sdk";
+import { v4 as uuidv4 } from "uuid";
+
+// Configurar S3 usando import y variables de entorno
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
+
+
 export const createAnalysis = async (req, res) => {
   try {
     const { usuario_id, estilo, tipo_error, duracion_video, observaciones } = req.body;
@@ -51,3 +62,25 @@ export const deleteAnalysis = async (req, res) => {
     res.status(500).json({ msg: "Error al eliminar análisis" });
   }
 };
+
+export const getPresignedUploadUrl = async (req, res) => {
+  try {
+    const { filename, contentType } = req.query;
+
+    const key = `videos/${uuidv4()}_${filename}`;
+
+    const params = {
+      Bucket: process.env.S3_BUCKET,
+      Key: key,
+      Expires: 300, // válido por 60 segundos
+      ContentType: contentType
+    };
+
+    const uploadUrl = s3.getSignedUrl("putObject", params);
+
+    return res.json({ uploadUrl, key });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Error generating pre-signed URL" });
+  }
+}
