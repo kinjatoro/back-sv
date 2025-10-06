@@ -67,6 +67,8 @@ export const getPresignedUploadUrl = async (req, res) => {
   try {
     const { filename, contentType } = req.query;
 
+    console.log('🖊️ Firmando con contentType:', contentType);
+
     const key = `videos/${uuidv4()}_${filename}`;
 
     const params = {
