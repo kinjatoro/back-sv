@@ -4,7 +4,7 @@ import {
   insertAnalysis,
   fetchAllAnalysis,
   fetchAnalysisByUser,
-  removeAnalysis,
+  removeAnalysis,fetchAnalysisWithCorrections,
 } from "../services/analysis.service.js";
 
 import AWS from "aws-sdk";
