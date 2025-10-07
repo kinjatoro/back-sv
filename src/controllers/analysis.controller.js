@@ -26,6 +26,10 @@ export const createAnalysis = async (req, res) => {
       return res.status(400).json({ msg: "Faltan campos obligatorios" });
     }
 
+    if (typeof video === 'string' && video.includes('_')) {
+      video = video.split('_')[0];
+    }
+
     await insertAnalysis({ usuario_id, estilo, duracion_video, observaciones, csv, video });
     res.status(201).json({ msg: "Análisis creado correctamente" });
   } catch (err) {
