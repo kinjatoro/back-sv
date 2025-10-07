@@ -101,10 +101,19 @@ export const getStatus = async (req, res) => {
       return res.status(404).json({ msg: "Análisis no encontrado" });
     }
 
-    res.json(result[0]);
+    const analysis = result[0];
+
+    // 👇 Calculás un status según tus reglas
+    const status = analysis.video ? "complete" : "pending";
+
+    res.json({
+      ...analysis,
+      status, // agrega el campo status
+    });
   } catch (err) {
     console.error("Error en getStatus:", err);
     res.status(500).json({ msg: "Error al obtener el análisis" });
   }
 };
+
 
