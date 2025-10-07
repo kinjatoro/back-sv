@@ -20,15 +20,15 @@ const s3 = new AWS.S3({
 
 export const createAnalysis = async (req, res) => {
   try {
-    const { usuario_id, estilo, duracion_video, observaciones, csv, video } = req.body;
+    const { usuario_id, estilo, duracion_video, observaciones, csv, nombre_video } = req.body;
     console.log(req.body);
     if (!usuario_id || !estilo ) {
       return res.status(400).json({ msg: "Faltan campos obligatorios" });
     }
 
-    if (typeof video === 'string' && video.includes('_')) {
-      video = video.split('_')[0];
-    }
+    const video = (typeof nombre_video === 'string' && nombre_video.includes('_')) 
+      ? nombre_video.split('_')[0] 
+      : nombre_video;
 
     await insertAnalysis({ usuario_id, estilo, duracion_video, observaciones, csv, video });
     res.status(201).json({ msg: "Análisis creado correctamente" });
