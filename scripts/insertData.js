@@ -1,103 +1,58 @@
 import { connection } from "../config/db.js";
-import bcrypt from "bcrypt";
 
-// Usuarios de prueba
-const users = [
-  {
-    nombre: "Lucas",
-    email: "lucas@test.com",
-    password: bcrypt.hashSync("lucas123", 10),
-  },
-  {
-    nombre: "Valentina",
-    email: "valentina@test.com",
-    password: bcrypt.hashSync("vale123", 10),
-  },
-];
+// 1. Insertar usuarios
+const insertUsuarios = `
+INSERT INTO usuarios (nombre, email, password, foto_perfil)
+VALUES 
+  ('Valentina', 'valentina@test.com', 'hash_valentina', 3),
+  ('Lucas', 'lucas@test.com', 'hash_lucas', 7),
+  ('Carlos', 'carlos@test.com', 'hash_carlos', 0);
+`;
 
-// Análisis de prueba (se asociarán por `usuario_id`)
-const analysis = [
-  {
-    usuario_id: 1,
-    estilo: "crawl",
-    tipo_error: "Cabeza alta, brazo rígido",
-    duracion_video: 45,
-    observaciones: "Necesita relajar hombros",
-  },
-  {
-    usuario_id: 1,
-    estilo: "pecho",
-    tipo_error: "Poca patada, respiración tardía",
-    duracion_video: 38,
-    observaciones: "Se sugiere trabajo con tabla",
-  },
-  {
-    usuario_id: 2,
-    estilo: "mariposa",
-    tipo_error: "Movimiento descoordinado",
-    duracion_video: 52,
-    observaciones: "Buena actitud, necesita más fuerza",
-  },
-];
+// 2. Insertar historial_analisis
+const insertHistorial = `
+INSERT INTO historial_analisis (usuario_id, estilo, duracion_video, fecha_analisis, observaciones)
+VALUES
+  (1, 'pecho', 38, '2025-09-21 23:11:33', 'Se sugiere trabajo con tabla'),
+  (1, 'crawl', 45, '2025-09-21 23:11:33', 'Necesita relajar hombros'),
+  (2, 'mariposa', 52, '2025-09-21 23:11:33', 'Buena actitud, necesita más fuerza'),
+  (2, 'mariposa', 40, '2025-09-22 00:32:24', 'Se sugiere drill con 1 brazo');
+`;
 
-// Función para insertar usuarios
-const insertUsers = () => {
-  return Promise.all(
-    users.map((user) => {
-      return new Promise((resolve, reject) => {
-        const query = `INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)`;
-        connection.query(
-          query,
-          [user.nombre, user.email, user.password],
-          (err, result) => {
-            if (err) return reject(err);
-            resolve(result);
-          }
-        );
-      });
-    })
-  );
-};
+// 3. Insertar correcciones
+const insertCorrecciones = `
+INSERT INTO correcciones (analisis_id, tipo_error, descripcion, snapshot_url)
+VALUES
+  (1, 'Poca patada', 'No se observan impulsos de piernas en fase de empuje.', 'https://s3.amazonaws.com/tu-bucket/snapshots/pecho1.jpg'),
+  (1, 'Respiración tardía', 'Cabeza sale muy tarde y corta el ritmo.', 'https://s3.amazonaws.com/tu-bucket/snapshots/pecho2.jpg'),
+  (2, 'Cabeza alta', 'Mira al frente en vez de hacia abajo.', 'https://s3.amazonaws.com/tu-bucket/snapshots/crawl1.jpg'),
+  (3, 'Descoordinación', 'Brazada y patada no están sincronizadas.', 'https://s3.amazonaws.com/tu-bucket/snapshots/mariposa1.jpg'),
+  (4, 'Brazada alta', 'Los brazos pasan demasiado por encima del agua.', 'https://s3.amazonaws.com/tu-bucket/snapshots/mariposa2.jpg');
+`;
 
-// Función para insertar análisis
-const insertAnalysis = () => {
-  return Promise.all(
-    analysis.map((a) => {
-      return new Promise((resolve, reject) => {
-        const query = `
-          INSERT INTO historial_analisis 
-          (usuario_id, estilo, tipo_error, duracion_video, observaciones) 
-          VALUES (?, ?, ?, ?, ?)
-        `;
-        connection.query(
-          query,
-          [a.usuario_id, a.estilo, a.tipo_error, a.duracion_video, a.observaciones],
-          (err, result) => {
-            if (err) return reject(err);
-            resolve(result);
-          }
-        );
-      });
-    })
-  );
-};
-
-// Ejecutar el seeding
-const seed = async () => {
-  try {
-    console.log("⏳ Insertando usuarios...");
-    await insertUsers();
-    console.log("✅ Usuarios insertados");
-
-    console.log("⏳ Insertando historial de análisis...");
-    await insertAnalysis();
-    console.log("✅ Historial de análisis insertado");
-
-    process.exit();
-  } catch (err) {
-    console.error("❌ Error durante el seeding:", err.message);
-    process.exit(1);
+// Ejecutar en orden
+connection.query(insertUsuarios, (err) => {
+  if (err) {
+    console.error("❌ Error insertando usuarios:", err.message);
+  } else {
+    console.log("✅ Usuarios insertados.");
   }
-};
 
-seed();
+  connection.query(insertHistorial, (err) => {
+    if (err) {
+      console.error("❌ Error insertando historial:", err.message);
+    } else {
+      console.log("✅ Historial de análisis insertado.");
+    }
+
+    connection.query(insertCorrecciones, (err) => {
+      if (err) {
+        console.error("❌ Error insertando correcciones:", err.message);
+      } else {
+        console.log("✅ Correcciones insertadas.");
+      }
+
+      connection.end(); // Cerrar conexión
+    });
+  });
+});

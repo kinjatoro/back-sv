@@ -20,13 +20,13 @@ const s3 = new AWS.S3({
 
 export const createAnalysis = async (req, res) => {
   try {
-    const { usuario_id, estilo, tipo_error, duracion_video, observaciones } = req.body;
+    const { usuario_id, estilo, duracion_video, observaciones, csv } = req.body;
 
     if (!usuario_id || !estilo || !duracion_video) {
       return res.status(400).json({ msg: "Faltan campos obligatorios" });
     }
 
-    await insertAnalysis({ usuario_id, estilo, tipo_error, duracion_video, observaciones });
+    await insertAnalysis({ usuario_id, estilo, duracion_video, observaciones, csv });
     res.status(201).json({ msg: "Análisis creado correctamente" });
   } catch (err) {
     console.error(err);

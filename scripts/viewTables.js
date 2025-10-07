@@ -1,31 +1,38 @@
 import { connection } from "../config/db.js";
 
-// Visualizar tabla usuarios
-const viewUsuarios = `
-SELECT * FROM usuarios;
-`;
+// Consultas SQL
+const viewUsuarios = `SELECT * FROM usuarios;`;
+const viewHistorial = `SELECT * FROM historial_analisis;`;
+const viewCorrecciones = `SELECT * FROM correcciones;`;
 
-// Visualizar tabla historial_analisis
-const viewHistorial = `
-SELECT * FROM historial_analisis;
-`;
-
+// Ejecutar consultas en orden
 connection.query(viewUsuarios, (err, results) => {
   if (err) {
     console.error("Error visualizando tabla 'usuarios':", err.message);
   } else {
     console.log("Datos de la tabla 'usuarios':");
-    console.table(results); // <-- Muestra en formato tabla en consola
+    console.table(results);
 
-    // Después de ver usuarios, vemos historial
+    // Luego historial
     connection.query(viewHistorial, (err, results) => {
       if (err) {
         console.error("Error visualizando tabla 'historial_analisis':", err.message);
       } else {
         console.log("Datos de la tabla 'historial_analisis':");
         console.table(results);
+
+        // Finalmente correcciones
+        connection.query(viewCorrecciones, (err, results) => {
+          if (err) {
+            console.error("Error visualizando tabla 'correcciones':", err.message);
+          } else {
+            console.log("Datos de la tabla 'correcciones':");
+            console.table(results);
+          }
+          // Cerrar conexión al final
+          connection.end();
+        });
       }
-      process.exit(); // Finalizar proceso correctamente
     });
   }
 });
