@@ -6,6 +6,7 @@ import {
   getAnalysisByUserId,
   deleteAnalysis,
   getPresignedUploadUrl,
+  getStatus
 } from "../controllers/analysis.controller.js";
 
 export const analysisRouter = express.Router();
@@ -15,3 +16,5 @@ analysisRouter.get("/", getAllAnalysis);
 analysisRouter.get("/user/:id", getAnalysisByUserId);
 analysisRouter.delete("/:id", deleteAnalysis);
 analysisRouter.get("/upload-url", getPresignedUploadUrl);
+analysisRouter.get("/status/:video", getStatus);
+

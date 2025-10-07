@@ -49,3 +49,16 @@ export const removeAnalysis = (id) => {
     });
   });
 };
+
+export const fetchAnalysisWithCorrections = (video) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT * FROM historial_analisis WHERE video = ?;
+    `;
+
+    connection.query(query, [video], (err, results) => {
+      if (err) return reject(err);
+      resolve(results);
+    });
+  });
+};

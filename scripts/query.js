@@ -2,7 +2,7 @@ import { connection } from "../config/db.js";
 
 // Insertar registros solo en la columna `csv`
 const insertCsvColumn = `
-ALTER TABLE historial_analisis ADD COLUMN csv TEXT;
+ALTER TABLE historial_analisis ADD COLUMN video TEXT;
 `;
 
 connection.query(insertCsvColumn, (err) => {

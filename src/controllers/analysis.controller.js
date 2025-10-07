@@ -20,13 +20,13 @@ const s3 = new AWS.S3({
 
 export const createAnalysis = async (req, res) => {
   try {
-    const { usuario_id, estilo, duracion_video, observaciones, csv } = req.body;
-
+    const { usuario_id, estilo, duracion_video, observaciones, csv, video } = req.body;
+    console.log(req.body);
     if (!usuario_id || !estilo || !duracion_video) {
       return res.status(400).json({ msg: "Faltan campos obligatorios" });
     }
 
-    await insertAnalysis({ usuario_id, estilo, duracion_video, observaciones, csv });
+    await insertAnalysis({ usuario_id, estilo, duracion_video, observaciones, csv, video });
     res.status(201).json({ msg: "Análisis creado correctamente" });
   } catch (err) {
     console.error(err);
@@ -87,3 +87,20 @@ export const getPresignedUploadUrl = async (req, res) => {
     return res.status(500).json({ error: "Error generating pre-signed URL" });
   }
 }
+
+export const getStatus = async (req, res) => {
+  try {
+    const { video } = req.params;
+    const result = await fetchAnalysisWithCorrections(video);
+
+    if (result.length === 0) {
+      return res.status(404).json({ msg: "Análisis no encontrado" });
+    }
+
+    res.json(result[0]);
+  } catch (err) {
+    console.error("Error en getStatus:", err);
+    res.status(500).json({ msg: "Error al obtener el análisis" });
+  }
+};
+
