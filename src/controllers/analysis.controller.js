@@ -22,7 +22,7 @@ export const createAnalysis = async (req, res) => {
   try {
     const { usuario_id, estilo, duracion_video, observaciones, csv, video } = req.body;
     console.log(req.body);
-    if (!usuario_id || !estilo || !duracion_video) {
+    if (!usuario_id || !estilo ) {
       return res.status(400).json({ msg: "Faltan campos obligatorios" });
     }
 
