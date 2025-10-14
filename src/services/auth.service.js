@@ -44,17 +44,69 @@ export const authenticateUser = ({ email, password }) => {
         if (!match) return reject(new Error("Credenciales inválidas"));
 
 
-        const token = jwt.sign({ id: user.id, nombre: user.nombre, email: user.email }, JWT_SECRET, {
+        const token = jwt.sign({ id: user.id, 
+          nombre: user.nombre, 
+          email: user.email, 
+          foto_perfil:  user.foto_perfil, 
+          metas: user.metas}, 
+          JWT_SECRET, {
           expiresIn: "1d",
         });
 
         resolve({
-          user: { id: user.id, nombre: user.nombre, email: user.email },
+          user: {
+            id: user.id,
+            nombre: user.nombre,
+            email: user.email,
+            foto_perfil: user.foto_perfil,
+            metas: user.metas,
+          },
           token,
         });
+
       } catch (e) {
         return reject(new Error("Error al autenticar"));
       }
     });
   });
 };
+
+export const updateUserProfile = (userId, datosActualizados) => {
+  return new Promise((resolve, reject) => {
+    const campos = [];
+    const valores = [];
+
+    if (datosActualizados.nombre) {
+      campos.push("nombre = ?");
+      valores.push(datosActualizados.nombre);
+    }
+
+    if (typeof datosActualizados.foto_perfil !== "undefined") {
+      campos.push("foto_perfil = ?");
+      valores.push(datosActualizados.foto_perfil);
+    }
+
+    if (typeof datosActualizados.metas !== "undefined") {
+      campos.push("metas = ?");
+      valores.push(datosActualizados.metas);
+    }
+
+    if (campos.length === 0) {
+      return resolve(null); // Nada para actualizar
+    }
+
+    const query = `UPDATE usuarios SET ${campos.join(", ")} WHERE id = ?`;
+    valores.push(userId);
+
+    connection.query(query, valores, (err, result) => {
+      if (err) return reject(err);
+
+      // Traer los datos actualizados
+      connection.query("SELECT id, nombre, email, foto_perfil, metas FROM usuarios WHERE id = ?", [userId], (err, rows) => {
+        if (err) return reject(err);
+        resolve(rows[0]);
+      });
+    });
+  });
+};
+

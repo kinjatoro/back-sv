@@ -1,5 +1,5 @@
 // src/controllers/auth.controller.js
-import { createUser, authenticateUser } from "../services/auth.service.js";
+import { createUser, authenticateUser, updateUserProfile  } from "../services/auth.service.js";
 import { z, ZodError } from "zod"; 
 
 
@@ -8,6 +8,8 @@ const registerSchema = z.object({
   nombre: z.string().min(1, "Nombre requerido"),
   email: z.email("Email inválido"),
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+  foto_perfil: z.number({ invalid_type_error: "foto_perfil debe ser un número" }),
+  metas: z.string().optional(),
 });
 
 const loginSchema = z.object({
@@ -15,10 +17,16 @@ const loginSchema = z.object({
   password: z.string().min(1, "Contraseña requerida"),
 });
 
+const updateProfileSchema = z.object({
+  nombre: z.string().min(1, "Nombre requerido").optional(),
+  foto_perfil: z.number({ invalid_type_error: "foto_perfil debe ser un número" }).optional(),
+  metas: z.string().optional(),
+});
+
 export const registerUser = async (req, res) => {
   try {
-    const { nombre, email, password } = registerSchema.parse(req.body);
-    const result = await createUser({ nombre, email, password });
+    const { nombre, email, password, foto_perfil, metas } = registerSchema.parse(req.body);
+    const result = await createUser({ nombre, email, password, foto_perfil, metas });
     if (result.emailInUse) {
       return res.status(400).json({ msg: "El email ya está registrado" });
     }
@@ -49,5 +57,26 @@ export const loginUser = async (req, res) => {
 
     // Error genérico para no exponer detalles internos
     return res.status(400).json({ msg: "Credenciales inválidas" });
+  }
+};
+
+export const editarPerfil = async (req, res) => {
+  try {
+    const userId = req.user?.id; // Asumiendo que `req.user` viene del middleware de autenticación
+    if (!userId) return res.status(401).json({ msg: "No autorizado" });
+
+    const datosActualizados = updateProfileSchema.parse(req.body);
+
+    const usuarioActualizado = await updateUserProfile(userId, datosActualizados);
+
+    res.status(200).json({ msg: "Perfil actualizado exitosamente", user: usuarioActualizado });
+  } catch (err) {
+    if (err instanceof ZodError && Array.isArray(err.errors)) {
+      const errores = err.errors.map(e => e.message);
+      return res.status(400).json({ errores });
+    }
+
+    console.error("ERROR al actualizar perfil:", err);
+    res.status(500).json({ msg: "Error al actualizar el perfil" });
   }
 };
