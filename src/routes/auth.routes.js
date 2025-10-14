@@ -1,12 +1,13 @@
 // src/routes/auth.routes.js
 import express from "express";
 import { registerUser, loginUser, editarPerfil } from "../controllers/auth.controller.js";
+import { verificarToken } from "../middleware/auth.middleware.js";
 
 export const authRouter = express.Router();
 
 authRouter.post("/register", registerUser);
 authRouter.post("/login", loginUser);
-authRouter.put("/profile", editarPerfil);
+authRouter.put("/profile", verificarToken, editarPerfil);
 
 /*
 authRouter.post("/verify-code", (req, res) => {
