@@ -117,3 +117,15 @@ export const updateUserProfile = (userId, datosActualizados) => {
   });
 };
 
+export const getUserByEmail = (email) => {
+  return new Promise((resolve, reject) => {
+    const query = "SELECT * FROM usuarios WHERE email = ?";
+    connection.query(query, [email], (err, results) => {
+      if (err) return reject(err);
+      if (!results || results.length === 0) return resolve(null); // mejor devolver null si no existe
+      resolve(results[0]);
+    });
+  });
+};
+
+
