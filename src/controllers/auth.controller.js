@@ -2,7 +2,7 @@
 import { createUser, authenticateUser, updateUserProfile, getUserByEmail  } from "../services/auth.service.js";
 import { z, ZodError } from "zod"; 
 import jwt from 'jsonwebtoken';
-
+const JWT_SECRET = process.env.JWT_SECRET || "2025tesis";
 
 
 // Validaciones con Zod
