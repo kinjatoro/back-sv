@@ -5,7 +5,7 @@ import { connection } from "../../config/db.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "2025tesis";
 
-export const createUser = ({ nombre, email, password }) => {
+export const createUser = ({ nombre, email, password, metas }) => {
   return new Promise((resolve, reject) => {
     const checkQuery = "SELECT id FROM usuarios WHERE email = ?";
     connection.query(checkQuery, [email], (err, results) => {
@@ -15,14 +15,20 @@ export const createUser = ({ nombre, email, password }) => {
       }
 
       const hashedPassword = bcrypt.hashSync(password, 10);
-      const insertQuery = "INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)";
-      connection.query(insertQuery, [nombre, email, hashedPassword], (err, result) => {
+      const insertQuery = `
+        INSERT INTO usuarios (nombre, email, password, metas, foto_perfil)
+        VALUES (?, ?, ?, ?, ?)
+      `;
+      const values = [nombre, email, hashedPassword, metas, 0];
+
+      connection.query(insertQuery, values, (err, result) => {
         if (err) return reject(err);
         resolve({ success: true });
       });
     });
   });
 };
+
 
 export const authenticateUser = ({ email, password }) => {
   return new Promise((resolve, reject) => {
