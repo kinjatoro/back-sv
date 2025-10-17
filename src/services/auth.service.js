@@ -19,7 +19,7 @@ export const createUser = ({ nombre, email, password, metas }) => {
         INSERT INTO usuarios (nombre, email, password, metas, foto_perfil)
         VALUES (?, ?, ?, ?, ?)
       `;
-      const values = [nombre, email, hashedPassword, metas, 0];
+      const values = [nombre, email, hashedPassword, metas, 0]; // 👈 acá seteamos 0 explícitamente
 
       connection.query(insertQuery, values, (err, result) => {
         if (err) return reject(err);
@@ -28,6 +28,7 @@ export const createUser = ({ nombre, email, password, metas }) => {
     });
   });
 };
+
 
 
 export const authenticateUser = ({ email, password }) => {
