@@ -1,6 +1,8 @@
 // src/controllers/auth.controller.js
 import { createUser, authenticateUser, updateUserProfile, getUserByEmail  } from "../services/auth.service.js";
 import { z, ZodError } from "zod"; 
+import jwt from 'jsonwebtoken';
+
 
 
 // Validaciones con Zod
