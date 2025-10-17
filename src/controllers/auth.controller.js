@@ -8,7 +8,6 @@ const registerSchema = z.object({
   nombre: z.string().min(1, "Nombre requerido"),
   email: z.email("Email inválido"),
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
-  foto_perfil: z.number({ invalid_type_error: "foto_perfil debe ser un número" }),
   metas: z.string().optional(),
 });
 
@@ -25,23 +24,27 @@ const updateProfileSchema = z.object({
 
 export const registerUser = async (req, res) => {
   try {
-    const { nombre, email, password, foto_perfil, metas } = registerSchema.parse(req.body);
-    const result = await createUser({ nombre, email, password, foto_perfil, metas });
+    const { nombre, email, password, metas } = registerSchema.parse(req.body);
+
+    // No se recibe foto_perfil, createUser lo setea a 0 automáticamente
+    const result = await createUser({ nombre, email, password, metas });
+
     if (result.emailInUse) {
       return res.status(400).json({ msg: "El email ya está registrado" });
     }
+
     res.status(201).json({ msg: "Usuario registrado exitosamente" });
   } catch (err) {
     if (err instanceof ZodError && Array.isArray(err.errors)) {
-    const errores = err.errors.map(e => e.message);
-    return res.status(400).json({ errores });
-  }
-    
-    console.error("ERROR en registro:", err);
+      const errores = err.errors.map(e => e.message);
+      return res.status(400).json({ errores });
+    }
 
+    console.error("ERROR en registro:", err);
     res.status(500).json({ msg: "Error al registrar usuario" });
   }
 };
+
 
 export const loginUser = async (req, res) => {
   try {
