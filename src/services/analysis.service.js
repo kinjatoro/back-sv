@@ -49,7 +49,7 @@ export const fetchAnalysisByUser = (userId) => {
       FROM historial_analisis ha
       LEFT JOIN correcciones c ON ha.id = c.analisis_id
       WHERE ha.usuario_id = ?
-      ORDER BY ha.id, c.id
+      ORDER BY ha.id DESC, c.id
     `;
 
     connection.query(query, [userId], (err, results) => {
