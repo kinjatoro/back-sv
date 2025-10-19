@@ -87,8 +87,9 @@ export const fetchAnalysisByUser = (userId) => {
       }
 
       // Convertir el objeto en array
-      const analisisConCorrecciones = Object.values(analisisMap);
+      const analisisConCorrecciones = Object.values(analisisMap).sort((a, b) => b.id - a.id);
       resolve(analisisConCorrecciones);
+
     });
   });
 };
