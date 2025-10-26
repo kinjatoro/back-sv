@@ -11,12 +11,35 @@ export const insertAnalysis = ({ usuario_id, estilo, duracion_video, observacion
 
     connection.query(
       query,
-      [usuario_id, estilo, duracion_video, observaciones, csv, video ],
+      [usuario_id, estilo, duracion_video, observaciones, csv, video],
       (err, result) => {
         if (err) return reject(err);
-        resolve(result);
+        resolve(result); // ⚠️ Esto contiene result.insertId
       }
     );
+  });
+};
+
+// 🔽 Nuevo servicio para insertar correcciones asociadas al análisis
+export const insertCorrecciones = (analisis_id, correcciones) => {
+  return new Promise((resolve, reject) => {
+    if (!correcciones || correcciones.length === 0) return resolve();
+
+    const query = `
+      INSERT INTO correcciones (analisis_id, tipo_error, descripcion, snapshot_url)
+      VALUES ?`;
+
+    const values = correcciones.map(c => [
+      analisis_id,
+      c.tipo_error,
+      c.descripcion,
+      c.snapshot_url
+    ]);
+
+    connection.query(query, [values], (err, result) => {
+      if (err) return reject(err);
+      resolve(result);
+    });
   });
 };
 

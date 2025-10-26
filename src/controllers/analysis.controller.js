@@ -18,11 +18,20 @@ const s3 = new AWS.S3({
 });
 
 
+// src/controllers/analysis.controller.js
 export const createAnalysis = async (req, res) => {
   try {
-    const { usuario_id, estilo, duracion_video, observaciones, csv, nombre_video } = req.body;
-    console.log(req.body);
-    if (!usuario_id || !estilo ) {
+    const {
+      usuario_id,
+      estilo,
+      duracion_video,
+      observaciones,
+      csv,
+      nombre_video,
+      correcciones = [],
+    } = req.body;
+
+    if (!usuario_id || !estilo) {
       return res.status(400).json({ msg: "Faltan campos obligatorios" });
     }
 
@@ -30,13 +39,22 @@ export const createAnalysis = async (req, res) => {
       ? nombre_video.split('_')[0] 
       : nombre_video;
 
-    await insertAnalysis({ usuario_id, estilo, duracion_video, observaciones, csv, video });
-    res.status(201).json({ msg: "Análisis creado correctamente" });
+    // 1. Insertar el análisis
+    const result = await insertAnalysis({ usuario_id, estilo, duracion_video, observaciones, csv, video });
+    const analisis_id = result.insertId;
+
+    // 2. Insertar las correcciones (si vienen en el request)
+    if (correcciones.length > 0) {
+      await insertCorrecciones(analisis_id, correcciones);
+    }
+
+    res.status(201).json({ msg: "Análisis creado correctamente", analisis_id });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: "Error al crear el análisis" });
   }
 };
+
 
 export const getAllAnalysis = async (req, res) => {
   try {
