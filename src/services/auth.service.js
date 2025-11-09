@@ -19,7 +19,7 @@ export const createUser = ({ nombre, email, password, metas }) => {
         INSERT INTO usuarios (nombre, email, password, metas, foto_perfil)
         VALUES (?, ?, ?, ?, ?)
       `;
-      const values = [nombre, email, hashedPassword, metas, 0]; // 👈 acá seteamos 0 explícitamente
+      const values = [nombre, email, hashedPassword, metas, 0]; 
 
       connection.query(insertQuery, values, (err, result) => {
         if (err) return reject(err);
@@ -42,7 +42,7 @@ export const authenticateUser = ({ email, password }) => {
       try {
         const user = results[0];
 
-        // Validación defensiva de campos críticos
+        
         if (!user || !user.id || !user.nombre || !user.email || !user.password) {
         return reject(new Error("Credenciales inválidas"));
         }
@@ -122,7 +122,7 @@ export const getUserByEmail = (email) => {
     const query = "SELECT * FROM usuarios WHERE email = ?";
     connection.query(query, [email], (err, results) => {
       if (err) return reject(err);
-      if (!results || results.length === 0) return resolve(null); // mejor devolver null si no existe
+      if (!results || results.length === 0) return resolve(null); 
       resolve(results[0]);
     });
   });

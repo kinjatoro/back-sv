@@ -13,7 +13,7 @@ connection.query(viewUsuarios, (err, results) => {
     console.log("Datos de la tabla 'usuarios':");
     console.table(results);
 
-    // Luego historial
+    // historial
     connection.query(viewHistorial, (err, results) => {
       if (err) {
         console.error("Error visualizando tabla 'historial_analisis':", err.message);
@@ -21,7 +21,7 @@ connection.query(viewUsuarios, (err, results) => {
         console.log("Datos de la tabla 'historial_analisis':");
         console.table(results);
 
-        // Finalmente correcciones
+        // correcciones
         connection.query(viewCorrecciones, (err, results) => {
           if (err) {
             console.error("Error visualizando tabla 'correcciones':", err.message);

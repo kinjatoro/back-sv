@@ -11,7 +11,6 @@ import {
 import AWS from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 
-// Configurar S3 usando import y variables de entorno
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -40,11 +39,9 @@ export const createAnalysis = async (req, res) => {
       ? nombre_video.split('_')[0] 
       : nombre_video;
 
-    // 1. Insertar el análisis
     const result = await insertAnalysis({ usuario_id, estilo, duracion_video, observaciones, csv, video });
     const analisis_id = result.insertId;
 
-    // 2. Insertar las correcciones (si vienen en el request)
     if (correcciones.length > 0) {
       await insertCorrecciones(analisis_id, correcciones);
     }
@@ -122,12 +119,11 @@ export const getStatus = async (req, res) => {
 
     const analysis = result[0];
 
-    // 👇 Calculás un status según tus reglas
     const status = analysis.video ? "complete" : "pending";
 
     res.json({
       ...analysis,
-      status, // agrega el campo status
+      status, 
     });
   } catch (err) {
     console.error("Error en getStatus:", err);

@@ -36,7 +36,7 @@ connection.query(createUsuarios, (err) => {
       } else {
         console.log("Tabla 'historial_analisis' creada o ya existe.");
       }
-      process.exit(); // Cerrar conexión al finalizar
+      process.exit(); 
     });
   }
 });

@@ -14,13 +14,12 @@ export const insertAnalysis = ({ usuario_id, estilo, duracion_video, observacion
       [usuario_id, estilo, duracion_video, observaciones, csv, video],
       (err, result) => {
         if (err) return reject(err);
-        resolve(result); // ⚠️ Esto contiene result.insertId
+        resolve(result); 
       }
     );
   });
 };
 
-// 🔽 Nuevo servicio para insertar correcciones asociadas al análisis
 export const insertCorrecciones = (analisis_id, correcciones) => {
   return new Promise((resolve, reject) => {
     if (!correcciones || correcciones.length === 0) return resolve();

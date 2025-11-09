@@ -13,7 +13,7 @@ export const verificarToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // Aquí viene el id, email, etc. que pusiste al generar el token
+    req.user = decoded; 
     next();
   } catch (err) {
     console.error("Token inválido:", err);

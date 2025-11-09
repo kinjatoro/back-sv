@@ -14,12 +14,11 @@ export const connection = mysql.createPool({
   queueLimit: 0,
 });
 
-// Prueba de conexión
 connection.getConnection((err, conn) => {
   if (err) {
     console.error("Error al conectar a MySQL:", err.message);
   } else {
     console.log("Conectado a MySQL con pool de conexiones");
-    conn.release(); // liberar la conexión después de probar
+    conn.release(); 
   }
 });
