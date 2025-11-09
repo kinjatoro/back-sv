@@ -13,7 +13,9 @@ export const insertAnalysis = ({ usuario_id, estilo, duracion_video, observacion
       query,
       [usuario_id, estilo, duracion_video, observaciones, csv, video],
       (err, result) => {
-        if (err) return reject(err);
+        if (err) {
+  return reject(new Error(err.sqlMessage || "Error en la base de datos"));
+}
         resolve(result); 
       }
     );
@@ -36,7 +38,9 @@ export const insertCorrecciones = (analisis_id, correcciones) => {
     ]);
 
     connection.query(query, [values], (err, result) => {
-      if (err) return reject(err);
+      if (err) {
+  return reject(new Error(err.sqlMessage || "Error en la base de datos"));
+}
       resolve(result);
     });
   });
@@ -46,7 +50,9 @@ export const fetchAllAnalysis = () => {
   return new Promise((resolve, reject) => {
     const query = `SELECT * FROM historial_analisis`;
     connection.query(query, (err, results) => {
-      if (err) return reject(err);
+      if (err) {
+  return reject(new Error(err.sqlMessage || "Error en la base de datos"));
+}
       resolve(results);
     });
   });
@@ -75,7 +81,9 @@ export const fetchAnalysisByUser = (userId) => {
     `;
 
     connection.query(query, [userId], (err, results) => {
-      if (err) return reject(err);
+      if (err) {
+  return reject(new Error(err.sqlMessage || "Error en la base de datos"));
+}
 
       // Agrupar resultados por análisis
       const analisisMap = {};
@@ -121,7 +129,9 @@ export const removeAnalysis = (id) => {
   return new Promise((resolve, reject) => {
     const query = `DELETE FROM historial_analisis WHERE id = ?`;
     connection.query(query, [id], (err, result) => {
-      if (err) return reject(err);
+      if (err) {
+  return reject(new Error(err.sqlMessage || "Error en la base de datos"));
+}
       resolve(result);
     });
   });
@@ -134,7 +144,9 @@ export const fetchAnalysisWithCorrections = (video) => {
     `;
 
     connection.query(query, [video], (err, results) => {
-      if (err) return reject(err);
+      if (err) {
+  return reject(new Error(err.sqlMessage || "Error en la base de datos"));
+}
       resolve(results);
     });
   });
