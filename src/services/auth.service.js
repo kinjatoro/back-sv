@@ -9,9 +9,7 @@ export const createUser = ({ nombre, email, password, metas }) => {
   return new Promise((resolve, reject) => {
     const checkQuery = "SELECT id FROM usuarios WHERE email = ?";
     connection.query(checkQuery, [email], (err, results) => {
-      if (err) {
-  return reject(new Error(err.sqlMessage || "Error en la base de datos"));
-}
+      if (err) return reject(err);
       if (results.length > 0) {
         return resolve({ emailInUse: true });
       }
@@ -24,9 +22,7 @@ export const createUser = ({ nombre, email, password, metas }) => {
       const values = [nombre, email, hashedPassword, metas, 0]; 
 
       connection.query(insertQuery, values, (err, result) => {
-        if (err) {
-  return reject(new Error(err.sqlMessage || "Error en la base de datos"));
-}
+        if (err) return reject(err);
         resolve({ success: true });
       });
     });
@@ -110,15 +106,11 @@ export const updateUserProfile = (userId, datosActualizados) => {
     valores.push(userId);
 
     connection.query(query, valores, (err, result) => {
-      if (err) {
-  return reject(new Error(err.sqlMessage || "Error en la base de datos"));
-}
+      if (err) return reject(err);
 
       // Traer los datos actualizados
       connection.query("SELECT id, nombre, email, foto_perfil, metas FROM usuarios WHERE id = ?", [userId], (err, rows) => {
-        if (err) {
-  return reject(new Error(err.sqlMessage || "Error en la base de datos"));
-}
+        if (err) return reject(err);
         resolve(rows[0]);
       });
     });
@@ -129,9 +121,7 @@ export const getUserByEmail = (email) => {
   return new Promise((resolve, reject) => {
     const query = "SELECT * FROM usuarios WHERE email = ?";
     connection.query(query, [email], (err, results) => {
-      if (err) {
-  return reject(new Error(err.sqlMessage || "Error en la base de datos"));
-}
+      if (err) return reject(err);
       if (!results || results.length === 0) return resolve(null); 
       resolve(results[0]);
     });
